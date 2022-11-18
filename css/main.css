@@ -43,48 +43,6 @@
 
 /**********************************************************/
 
-input[type="checkbox"] {
-    position: absolute !important;
-    clip: rect(1px, 1px, 1px, 1px);
-    padding: 0 !important;
-    border: 0 !important;
-    height: 1px !important;
-    width: 1px !important;
-    overflow: hidden;
-}
-
-input[type="checkbox"] + span:before {
-    content: '\00f096';
-    display: inline-block;
-    position: relative;
-    top: 3px;
-    width: 1em;
-    padding-left: 3px;
-    margin: 0 10px 3px 3px;
-    font: 1.5em FontAwesome;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
-    color: var(--primary-color);
-}
-
-input[type="checkbox"]:checked + span:before {
-    content: '\00f046';
-}
-
-input[type="checkbox"]:focus + span:before {
-    outline: 1px dotted #aaa;
-}
-
-input[type="checkbox"]:disabled + span:before {
-    color: #999;
-}
-
-input[type="checkbox"]:not(:disabled) + span:hover:before {
-    text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
-    transform: scale(1.1);
-}
-
-/**********************************************************/
-
 #root {
     width: 100vw;
     height: 100vh;
@@ -98,12 +56,66 @@ input[type="checkbox"]:not(:disabled) + span:hover:before {
 .app {
     width: 405px;
     position: relative;
+    overflow: hidden;
     min-height: 400px;
     max-height: 100vh;
-    background: var(--secondary-color);
     border-radius: 10px;
+    background: var(--secondary-color);
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+}
+
+/**********************************************************/
+
+.app input[type="checkbox"] {
+    position: absolute !important;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    width: 1px !important;
     overflow: hidden;
+}
+
+.app input[type="checkbox"] + span:before {
+    content: '\00f096';
+    display: inline-block;
+    position: relative;
+    top: 3px;
+    width: 1em;
+    padding-left: 3px;
+    margin: 0 10px 3px 3px;
+    font: 1.5em FontAwesome;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+    color: var(--primary-color);
+}
+
+.app input[type="checkbox"]:checked + span:before {
+    content: '\00f046';
+}
+
+.app input[type="checkbox"]:focus + span:before {
+    outline: 1px dotted #aaa;
+}
+
+.app input[type="checkbox"]:disabled + span:before {
+    color: #999;
+}
+
+.app input[type="checkbox"]:not(:disabled) + span:hover:before {
+    text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+/**********************************************************/
+
+.app .task-image {
+    height: 120px;
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+    background-image: url("../img/to-do-list.png");
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .app input[type="text"] {
@@ -125,7 +137,7 @@ input[type="checkbox"]:not(:disabled) + span:hover:before {
     color: #bfbfbf;
 }
 
-.task-add {
+.app .task-add {
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -133,77 +145,53 @@ input[type="checkbox"]:not(:disabled) + span:hover:before {
     padding: 15px 15px 0 15px;
 }
 
-.task-add label {
+.app .task-add label {
     width: 100%;
 }
 
-.task-add input[type="text"] {
+.app .task-add input[type="text"] {
     width: 100%;
     padding: 10px 45px 10px 15px;
-    flex-grow: 1;
 }
 
-.icon-add {
+.app .icon-add {
     position: absolute;
     right: 15px;
-    font-size: 27px;
-    color: var(--primary-color);
-    cursor: pointer;
     padding: 1px 5px;
     margin-left: 5px;
     margin-right: 3px;
     border-radius: 50%;
+    cursor: pointer;
+    font-size: 27px;
+    color: var(--primary-color);
 }
 
-.icon-add:not(.disabled) {
+.app .icon-add:not(.disabled) {
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
 }
 
-.icon-add:hover:not(.disabled) {
+.app .icon-add:hover:not(.disabled) {
     text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
     transform: scale(1.1);
 }
 
-.icon-add:active:not(.disabled) {
+.app .icon-add:active:not(.disabled) {
     background-color: var(--primary-color);
     color: var(--secondary-color);
 }
 
-.icon-add.disabled {
+.app .icon-add.disabled {
     opacity: 0.5;
     cursor: default;
 }
 
-.icon-add.disabled:hover {
+.app .icon-add.disabled:hover {
     text-shadow: none;
 }
 
-.icon-delete {
-    font-size: 1.5em;
-    color: var(--primary-color);
-    text-align: center;
-    cursor: pointer;
-    padding: 1px 5px;
-    margin-left: 10px;
-    border-radius: 50%;
-    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
-}
+/**********************************************************/
 
-.task-list:not([data-edit]) .icon-delete {
-    display: none;
-}
-
-.icon-delete:active {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-}
-
-.icon-delete:hover {
-    text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
-    transform: scale(1.1);
-}
-
-.task-controls {
+.app .task-controls {
     margin-top: 10px;
     padding: 0 15px;
     display: flex;
@@ -212,44 +200,93 @@ input[type="checkbox"]:not(:disabled) + span:hover:before {
     border-bottom: 1px solid #aaa;
 }
 
-.task-tabs {
+.app .task-tabs {
     display: flex;
     position: relative;
 }
 
-.task-tabs .task-slider {
+.app .task-tabs .task-slider {
     position: absolute;
     left: 0;
     bottom: -9px;
-    height: 9px;
     width: 50px;
-    background-color: var(--primary-color);
+    height: 9px;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
     box-shadow: 2px 0 2px rgba(0, 0, 0, 0.2);
+    background-color: var(--primary-color);
     transition: 0.15s ease-out;
- }
+}
 
-.task-tabs .task-tab {
+.app .task-tabs .task-tab {
     padding: 15px;
     font-size: 17px;
-    color: var(--text-color);
     cursor: pointer;
+    color: var(--text-color);
 }
 
-.task-tabs .task-tab.active {
-    color: var(--primary-color);
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+.app .task-tabs .task-tab.active {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    color: var(--primary-color);
 }
 
-.task-list {
+.app .task-tabs .task-tab:hover:not(.active) {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.app .badge {
+    margin-left: 0.3em;
+    padding: 0 0.37em;
+    border-radius: 0.76em;
+    font-size: 0.9em;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    transition: 0.15s ease-in;
+}
+
+.app .badge:not([data-value]),
+.app .badge[data-value="0"] {
+    display: none;
+}
+
+.app .icon-edit {
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 24px;
+    border-radius: 10px;
+    color: var(--primary-color);
+}
+
+.app .icon-edit.active {
+    box-shadow: inset -2px -2px 2px rgba(250, 250, 250, 1),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+    0 0 0 2px var(--primary-color);
+    transform: scale(0.9);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.app .icon-edit :hover {
+    text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+/**********************************************************/
+
+.app .task-list {
     padding-top: 10px;
     overflow-y: auto;
 }
 
-.task {
+.app .task {
     list-style: none;
     font-size: 18px;
     padding: 10px 15px;
@@ -259,100 +296,72 @@ input[type="checkbox"]:not(:disabled) + span:hover:before {
     align-items: center;
 }
 
-.task input[type="text"] {
+.app .task-list[data-filter="done"] .task[data-type="todo"] {
+    display: none;
+}
+
+.app .task-list[data-filter="todo"] .task[data-type="done"] {
+    display: none;
+}
+
+.app .task label {
+    display: flex;
+    align-items: center;
+}
+
+.app .task input[type="text"] {
     flex-grow: 1;
 }
 
-/*********************************************************************/
-
-.icon-edit {
-    margin-left: 10px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    border-radius: 10px;
-    font-size: 24px;
-    color: var(--primary-color);
-}
-
-.icon-edit.active {
-    box-shadow:
-            inset -2px -2px 2px rgba(250, 250, 250, 1),
-            inset 2px 2px 4px rgba(0, 0, 0, 0.4),
-            0 0 0 2px var(--primary-color);
-    transform: scale(0.9);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.icon-edit :hover {
-    text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
-    transform: scale(1.1);
-}
-
-.task-text {
+.app .task-text {
     color: var(--text-color);
 }
 
-input[type="checkbox"]:checked ~ .task-text {
+.app input[type="checkbox"]:checked ~ .task-text {
     text-decoration-line: line-through;
     text-decoration-style: solid;
-    text-decoration-color: lime;
+    text-decoration-color: var(--primary-color);
     text-decoration-thickness: 3px;
 }
 
-.task input[type="checkbox"] ~ .task-text {
+.app .task input[type="checkbox"] ~ .task-text {
     -moz-user-select: none;
     -ms-user-select: none;
     -webkit-user-select: none;
 }
 
-.task label {
-    display: flex;
-    align-items: center;
+.app .icon-delete {
+    margin-left: 10px;
+    padding: 1px 5px;
+    font-size: 1.5em;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 50%;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    color: var(--primary-color);
 }
 
-.task-list[data-filter="done"] .task[data-type="to-do"] {
-    display: none;
-}
-
-.task-list[data-filter="to-do"] .task[data-type="done"] {
-    display: none;
-}
-
-.badge {
-    padding: 0 0.37em;
-    margin-left: 0.3em;
-    border-radius: 0.76em;
-    color: var(--secondary-color);
+.app .icon-delete:active {
     background-color: var(--primary-color);
-    transition: 0.15s ease-in;
+    color: var(--secondary-color);
 }
 
-.badge:not([data-value]),
-.badge[data-value="0"] {
+.app .icon-delete:hover {
+    text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.app .task-list:not([data-edit="1"]) .icon-delete {
     display: none;
 }
 
-.task-image {
-    background-image: url("../img/to-do-list.png");
-    height: 120px;
-
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
-
-    background-position: top;
-    background-repeat: no-repeat;
-    background-size: cover;
-
-}
+/*********************************************************************/
 
 @media (max-width: 500px) {
     #root {
         align-items: flex-start;
     }
+
     .app {
         width: 100vw;
         box-shadow: none;

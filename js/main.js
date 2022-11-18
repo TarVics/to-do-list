@@ -3,250 +3,143 @@
  */
 
 /**
- * Callback для задання параметрів елемента за допомогою функції {@link makeTag}
- * @callback fnParamsCallback
- * @param {HTMLElement} element Елемент, якому потрібно вказати параметри
+ * Клас реалізації заголовку об'єкта "To do list"
+ * @class {Object} ToDoListHeader
  */
+class ToDoListHeader {
 
-/**
- * Додаткова інформація, яка використовується під час створення тегу функцією {@link makeTag}
- * @typedef {Object} TagInfo
- * @property {string?} className назва класу, із пробілами в ролі роздільників, у випадку, якщо кілька класів
- * @property {string?} id ID тегу
- * @property {string?} innerHTML innerHTML значення тегу
- * @property {string?} innerText innerText значення тегу. Якщо, цей атрибут заданий, то значення атрибуту html - буде ігноруватись
- * @property {string?} tagName назва тегу
- * @property {string?} textContent textContent значення тегу
- */
+    #onAppendTask;
 
-/**
- * Створення вкладених тегів
- * @param {string|TagInfo} tag Назва тегу або об'єкт із додатковою інформацією про тег
- * @param {fnParamsCallback|HTMLElement} fnParams Callback функція для задання параметрів елемента
- * У випадку, якщо функція не задана, то даний параметр буде вважатись дочірнім елементом, який додається
- * до поточного елемента
- * @param {...HTMLElement} children Дочірні елементи, які будуть додані до поточного елемента
- * @returns {HTMLElement}
- */
-const makeTag = function (tag, fnParams = undefined, ...children) {
-    let res;
-
-    if (typeof tag === 'object') {
-        res = document.createElement(tag.tagName || 'div');
-        if (tag.id) res.id = tag.id;
-        if (tag.className) res.className = tag.className;
-        if (tag.textContent) {
-            res.textContent = tag.textContent;
-        } else if (tag.innerText) {
-            res.innerText = tag.innerText;
-        } else if (tag.innerHTML) {
-            res.innerHTML = tag.innerHTML;
-        }
-    } else {
-        res = document.createElement(tag);
-    }
-
-    if (typeof fnParams === 'function') {
-        fnParams(res);
-        if (children.length) res.append(...children);
-    } else if (fnParams) {
-        res.append(fnParams, ...children);
-    } else {
-        res.append(...children);
-    }
-
-    return res;
-}
-
-/********************************************************************/
-
-/*
-
-const iconAdd = document.querySelector('.icon-add');
-const inputNew = document.querySelector('.task-add input[type="text"]');
-const iconEdit = document.querySelector('.icon-edit');
-const tabs = document.querySelector('.task-tabs');
-const taskList = document.querySelector('.task-list');
-const slider = document.querySelector('.task-slider');
-
-let inputNode = null;
-
-const rect0 = tabs.children[0].getBoundingClientRect();
-slider.style.left = rect0.left + 'px';
-slider.style.width = rect0.width + 'px';
-
-const tabsObserver = new ResizeObserver(entries => {
-    for (const entry of entries) {
-        if (entry.target.classList.contains('active')) {
-
-            const rect0 = tabs.children[0].getBoundingClientRect();
-            const rect1 = entry.target.getBoundingClientRect();
-
-            slider.style.left = (rect1.left - rect0.left) + 'px';
-            slider.style.width = rect1.width + 'px';
-            break;
-        }
-    }
-});
-
-[].forEach.call(tabs.children, tab => tabsObserver.observe(tab));
-
-const appendTask = () => {
-    if (iconAdd.classList.contains('disabled')) return;
-
-    const lastChild = taskList.lastElementChild;
-    const id = lastChild ? String(+lastChild.id + 1) : '1';
-
-    const newTask = makeTag({tagName: 'li', id, className: "task" }, el => { el.dataset.type = 'to-do' },
-        makeTag('label',
-            makeTag('input', el => { el.type = 'checkbox' }), makeTag('span'),
-            makeTag({ tagName: 'span', className: 'task-text', textContent: inputNew.value })
-        ),
-        makeTag({ tagName: 'span', className: 'icon-delete' },
-            makeTag({ tagName: 'i', className: 'fa-regular fa-trash-can' } )
-        )
-    );
-
-    taskList.appendChild(newTask);
-    inputNew.value = '';
-    iconAdd.classList.add('disabled');
-
-    let badge = tabs.children[0].children[0];
-    let count = (+badge.dataset.value || 0) + 1;
-    badge.dataset.value = count.toString();
-    badge.textContent = count.toString();
-
-    badge = tabs.children[1].children[0];
-    count = (+badge.dataset.value || 0)  + 1;
-    badge.dataset.value = count.toString();
-    badge.textContent = count.toString();
-
-    const scrollHeight = Math.max(
-        document.body.scrollHeight,
-        document.body.offsetHeight, document.documentElement.offsetHeight,
-        document.body.clientHeight, document.documentElement.clientHeight
-    );
-
-    taskList.style.maxHeight = (scrollHeight - taskList.getBoundingClientRect().top) + 'px';
-}
-
-inputNew.addEventListener('input', e => iconAdd.classList[e.target.value ? 'remove' : 'add']('disabled'));
-inputNew.addEventListener('keydown', e => (e.key === 'Enter') && appendTask());
-
-iconAdd.addEventListener('click', () => appendTask());
-
-iconEdit.addEventListener('click', () => {
-    iconEdit.classList.toggle('active');
-
-    if (iconEdit.classList.contains('active')) {
-        taskList.dataset.edit = '1';
-    } else {
-        delete taskList.dataset.edit;
-    }
-})
-
-tabs.addEventListener('click', e => {
-    [].forEach.call(tabs.children, tab => tab.classList.remove('active'));
-
-    const target = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
-    target.classList.add('active');
-
-    const rect0 = tabs.children[0].getBoundingClientRect();
-    const rect1 = target.getBoundingClientRect();
-
-    slider.style.left = (rect1.left - rect0.left) + 'px';
-    slider.style.width = rect1.width + 'px';
-
-    taskList.dataset.filter = target.id;
-})
-
-taskList.addEventListener('click', e => {
-    if (e.target.tagName === 'INPUT' || e.target.type === 'checkbox') {
-        const task = e.target.closest('li');
-        task.dataset.type = e.target.checked ? 'done' : 'to-do';
-
-        if (e.target.checked) {
-            let badge = tabs.children[1].children[0];
-            let count = (+badge.dataset.value || 0) - 1;
-            badge.dataset.value = count.toString();
-            badge.textContent = count.toString();
-
-            badge = tabs.children[2].children[0];
-            count = (+badge.dataset.value || 0)  + 1;
-            badge.dataset.value = count.toString();
-            badge.textContent = count.toString();
-        } else {
-            let badge = tabs.children[1].children[0];
-            let count = (+badge.dataset.value || 0) + 1;
-            badge.dataset.value = count.toString();
-            badge.textContent = count.toString();
-
-            badge = tabs.children[2].children[0];
-            count = (+badge.dataset.value || 0) - 1;
-            badge.dataset.value = count.toString();
-            badge.textContent = count.toString();
-        }
-    } else if (e.target.parentNode.classList.contains('icon-delete')) {
-        const task = e.target.closest('li');
-
-        let badge = tabs.children[0].children[0];
-        let count = (+badge.dataset.value || 0) - 1;
-        badge.dataset.value = count.toString();
-        badge.textContent = count.toString();
-
-        badge = tabs.children[task.dataset.type === 'done' ? 2 : 1].children[0];
-        count = (+badge.dataset.value || 0) - 1;
-        badge.dataset.value = count.toString();
-        badge.textContent = count.toString();
-
-        task.remove();
-    } else if (taskList.dataset.edit && e.target.classList.contains('task-text')) {
-        const taskText = e.target;
-        const labelNode = taskText.parentNode;
-
-        if (!inputNode) {
-            inputNode = document.createElement('input');
-            inputNode.type = 'text';
-            inputNode.addEventListener('change', e => {
-                const labelNode = e.target.previousElementSibling;
-                const taskText = labelNode.querySelector('.task-text');
-                taskText.textContent = e.target.value;
-            });
-            inputNode.addEventListener('blur', e => {
-                const labelNode = e.target.previousElementSibling;
-                const taskText = labelNode.querySelector('.task-text');
-                taskText.style.display = 'block';
-                e.target.style.display = 'none';
-            });
-            inputNode.addEventListener('keydown', e => {
-                if (e.key === 'Enter') e.target.blur();
-            });
-        }
-        inputNode.value = taskText.textContent;
-        inputNode.style.display = 'inline-block';
-        taskText.style.display = 'none';
-
-        labelNode.after(inputNode);
-        inputNode.focus();
-
-        e.preventDefault();
-    }
-});
-
-*/
-
-class ToDoList {
-
-    #initSelectors(root) {
-        this.iconAdd = root.querySelector('.icon-add');
+    /**
+     * Ініціалізація елементів
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #initElements(root) {
         this.inputNew = root.querySelector('.task-add input[type="text"]');
-        this.iconEdit = root.querySelector('.icon-edit');
-        this.tabs = root.querySelector('.task-tabs');
-        this.taskList = root.querySelector('.task-list');
-        this.slider = root.querySelector('.task-slider');
-        this.inputNode = null;
+        this.iconAdd = root.querySelector('.icon-add');
     }
 
+    /**
+     * Ініціалізація обробників подій елементів
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #initEvents(root) {
+        this.inputNew.addEventListener('input', e => {
+            this.iconAdd.classList[e.target.value ? 'remove' : 'add']('disabled')
+        });
+        this.inputNew.addEventListener('keydown', e => (e.key === 'Enter') && this.appendTask());
+
+        this.iconAdd.addEventListener('click', () => this.appendTask());
+    }
+
+    /**
+     * Ініціалізація екземпляра класу
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #init(root) {
+        this.#onAppendTask = null;
+    }
+
+    /**
+     * Додавання нового запису "to do", текст який було введено користувачем
+     */
+    appendTask() {
+        if (this.iconAdd.classList.contains('disabled')) return;
+
+        if (this.#onAppendTask) this.#onAppendTask(this.inputNew.value);
+
+        this.inputNew.value = '';
+        this.iconAdd.classList.add('disabled');
+    }
+
+    /**
+     * Конструктор класу ToDoListHeader
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    constructor(root = document.body) {
+        this.#initElements(root);
+        this.#initEvents(root);
+        this.#init(root);
+    }
+
+    /**
+     * Callback функція, яка виконується під час додавання нового запису списку "to do list"
+     * @callback AppendTaskCallback
+     * @param {string} text Текст запису списку "to do list"
+     */
+
+    /**
+     * Обробник додавання нового запису до списку "to do list"
+     * @param {AppendTaskCallback} fnAppendTask Посилання на функцію callback обробника нового запису
+     */
+    set onAppendTask(fnAppendTask) {
+        if (typeof fnAppendTask === 'function') {
+            this.#onAppendTask = fnAppendTask;
+        }
+    }
+}
+
+/**
+ * Клас реалізації елементів контролю об'єкта "To do list"
+ * @class {Object} ToDoListControls
+ */
+class ToDoListControls {
+    #onEditModeChange;
+    #onActiveTabChange;
+
+    /**
+     * Ініціалізація елементів
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #initElements(root) {
+        this.tabs = root.querySelector('.task-tabs');
+        this.slider = root.querySelector('.task-slider');
+        this.iconEdit = root.querySelector('.icon-edit');
+    }
+
+    /**
+     * Ініціалізація обробників подій елементів
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #initEvents(root) {
+        this.iconEdit.addEventListener('click', () => {
+            this.iconEdit.classList.toggle('active');
+            if (this.#onEditModeChange) this.#onEditModeChange(this.iconEdit.classList.contains('active'));
+        });
+
+        this.tabs.addEventListener('click', e => {
+            [].forEach.call(this.tabs.children, tab => tab.classList.remove('active'));
+
+            const target = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
+            target.classList.add('active');
+            this.#syncSlider(target);
+
+            if (this.#onActiveTabChange) this.#onActiveTabChange(target);
+        });
+    }
+
+    /**
+     * Ініціалізація екземпляра класу
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #init(root) {
+        this.#onActiveTabChange = null;
+        this.#onEditModeChange = null;
+
+        this.#syncSlider(this.tabs.children[0]);
+
+        this.tabsObserver = new ResizeObserver(() => {
+            [].forEach.call(this.tabs.children,tab =>
+                tab.classList.contains('active') && this.#syncSlider(tab));
+        });
+
+        [].forEach.call(this.tabs.children, tab => this.tabsObserver.observe(tab));
+    }
+
+    /**
+     * Синхронізація положення та розміру слайдера під вкладкою після зміни розміру чи активації вкладки
+     * @param {HTMLElement} tab
+     */
     #syncSlider(tab) {
         const rect0 = this.tabs.children[0].getBoundingClientRect();
         const rect1 = tab.getBoundingClientRect();
@@ -255,6 +148,11 @@ class ToDoList {
         this.slider.style.width = rect1.width + 'px';
     }
 
+    /**
+     * Зміна значення лічильника кількості записів списку при зміні стану завдання та після операцій створення чи видалення
+     * @param {HTMLElement} tab Вкладка, яка містить лічильник кількості записів
+     * @param {number} value Значення, яке додається до лічильника
+     */
     #incBadge(tab, value) {
         let badge = tab.children[0];
         let count = (+badge.dataset.value || 0) + value;
@@ -262,31 +160,201 @@ class ToDoList {
         badge.textContent = count.toString();
     }
 
+    /**
+     * Конструктор класу ToDoListControls
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    constructor(root = document.body) {
+        this.#initElements(root);
+        this.#initEvents(root);
+        this.#init(root);
+    }
+
+    /**
+     * Інформація для зміни значень лічильників завдань, використовується в {@link incBadgeValue}
+     * @typedef {Object} MovePageInfo
+     * @property {number} pageIndex Індекс вкладки, на якій розміщений лічильник
+     * @property {number} increment Значення, на яке збільшується лічильник
+     */
+
+    /**
+     * Зміна значень лічильників завдань
+     * @param {MovePageInfo[]} pageInfo Інформація для зміни значень лічильників завдань
+     */
+    incBadgeValue(pageInfo = []) {
+        pageInfo.forEach(info => this.#incBadge(this.tabs.children[info.pageIndex], info.increment));
+    }
+
+    /**
+     * Callback функція, яка виконується під час активації нової вкладки
+     * @callback ActiveTabChange
+     * @param {HTMLElement} tab Елемент активної вкладки
+     */
+
+    /**
+     * Callback функція, яка виконується під час активації нової вкладки
+     * @param {ActiveTabChange} fnActiveTabChange Посилання на функцію callback обробника активації нової вкладки
+     */
+    set onActiveTabChange(fnActiveTabChange) {
+        if (typeof fnActiveTabChange === 'function') {
+            this.#onActiveTabChange = fnActiveTabChange;
+        }
+    }
+
+    /**
+     * Callback функція, яка виконується під час зміни режиму редагування списку "to do list"
+     * @callback EditModeChangeCallback
+     * @param {boolean} edit Ознака того, що включений режим редагування списку "to do list"
+     */
+
+    /**
+     * Обробник зміни режиму редагування списку "to do list"
+     * @param {EditModeChangeCallback} fnEditModeChange Посилання на функцію callback обробника зміни режиму редагування
+     */
+    set onEditModeChange(fnEditModeChange) {
+        if (typeof fnEditModeChange === 'function') {
+            this.#onEditModeChange = fnEditModeChange;
+        }
+    }
+}
+
+/**
+ * Клас реалізації "To do list"
+ * @class {Object} ToDoList
+ */
+class ToDoList {
+
+    /**
+     * Ініціалізація елементів
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #initElements(root) {
+        this.taskList = root.querySelector('.task-list');
+
+        this.inputNode = document.createElement('input');
+        this.inputNode.type = 'text';
+    }
+
+    /**
+     * Ініціалізація обробників подій елементів
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #initEvents(root) {
+        this.taskList.addEventListener('click', e => {
+            this.fnCheckTask(e) || this.fnDeleteTask(e) || this.fnModifyTask(e);
+        });
+
+        this.inputNode.addEventListener('change', e => {
+            const labelNode = e.target.previousElementSibling;
+            const taskText = labelNode.querySelector('.task-text');
+            taskText.textContent = e.target.value;
+        });
+
+        this.inputNode.addEventListener('blur', e => {
+            const labelNode = e.target.previousElementSibling;
+            const taskText = labelNode.querySelector('.task-text');
+            taskText.style.display = 'block';
+            e.target.style.display = 'none';
+        });
+
+        this.inputNode.addEventListener('keydown', e => {
+            if (e.key === 'Enter') e.target.blur();
+        });
+    }
+
+    /**
+     * Ініціалізація екземпляра класу
+     * @param {HTMLElement?} root Батьківський елемент
+     */
+    #init(root) {
+        this.header = new ToDoListHeader(root);
+        this.header.onAppendTask = this.fnAppendTask.bind(this);
+
+        this.controls = new ToDoListControls(root);
+        this.controls.onEditModeChange = edit => this.taskList.dataset.edit = (+edit).toString();
+        this.controls.onActiveTabChange = tab => this.taskList.dataset.filter = tab.id;
+    }
+
+    /**
+     * Створення нового запису із текстом "to do"
+     * @param {string} taskText Текст повідомлення
+     */
+    #createTask(taskText) {
+        const lastChild = this.taskList.lastElementChild;
+        const id = lastChild ? String(+lastChild.id + 1) : '1';
+
+        const newTask = document.createElement('li');
+        newTask.id = id;
+        newTask.className = 'task';
+        newTask.dataset.type = 'todo';
+
+        const label = document.createElement('label');
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+
+        const ckSpan = document.createElement('span');
+
+        const taskSpan = document.createElement('span');
+        taskSpan.className = 'task-text';
+        taskSpan.textContent = taskText;
+
+        label.append(input, ckSpan, taskSpan);
+
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'icon-delete';
+
+        const deleteIcon = document.createElement('i');
+        deleteIcon.className = 'fa-regular fa-trash-can';
+
+        iconSpan.appendChild(deleteIcon);
+
+        newTask.append(label, iconSpan);
+
+        this.taskList.appendChild(newTask);
+    }
+
+    /**
+     * Обробник події зміни значення стану елемента "checkbox"
+     * @param {Event} e Подія зміни значення стану елемента "checkbox"
+     * @returns {boolean} Повертає true у випадку, якщо подія була успішно оброблена
+     */
     fnCheckTask(e) {
         const result = e.target.tagName === 'INPUT' || e.target.type === 'checkbox';
         if (result) {
             const task = e.target.closest('li');
-            task.dataset.type = e.target.checked ? 'done' : 'to-do';
+            task.dataset.type = e.target.checked ? 'done' : 'todo';
 
             if (e.target.checked) {
-                this.#incBadge(this.tabs.children[1], -1);
-                this.#incBadge(this.tabs.children[2], 1);
+                this.controls.incBadgeValue([
+                    {pageIndex: 1, increment: -1},
+                    {pageIndex: 2, increment: 1}
+                ]);
             } else {
-                this.#incBadge(this.tabs.children[1], 1);
-                this.#incBadge(this.tabs.children[2], -1);
+                this.controls.incBadgeValue([
+                    {pageIndex: 2, increment: -1},
+                    {pageIndex: 1, increment: 1}
+                ]);
             }
         }
         return result;
     }
 
+    /**
+     * Обробник події видалення запису
+     * @param {Event} e Подія, яка виникла при натисканні на елемент із класом "icon-delete"
+     * @returns {boolean} Повертає true у випадку, якщо подія була успішно оброблена
+     */
     fnDeleteTask(e) {
         const parent = e.target.parentNode;
         const result = parent && parent.classList.contains('icon-delete');
         if (result) {
             const task = e.target.closest('li');
 
-            this.#incBadge(this.tabs.children[0], -1);
-            this.#incBadge(this.tabs.children[task.dataset.type === 'done' ? 2 : 1], -1);
+            this.controls.incBadgeValue([
+                {pageIndex: 0, increment: -1},
+                {pageIndex: task.dataset.type === 'done' ? 2 : 1, increment: -1}
+            ]);
 
             task.remove();
         }
@@ -294,30 +362,17 @@ class ToDoList {
         return result;
     }
 
+    /**
+     * Обробник події редагування тексту запису
+     * @param {Event} e Подія, яка виникла при натисканні на елемент із класом "task-text"
+     * @returns {boolean} Повертає true у випадку, якщо подія була успішно оброблена
+     */
     fnModifyTask(e) {
-        const result = this.taskList.dataset.edit && e.target.classList.contains('task-text');
+        const result = +this.taskList.dataset.edit && e.target.classList.contains('task-text');
         if (result) {
             const taskText = e.target;
             const labelNode = taskText.parentNode;
 
-            if (!this.inputNode) {
-                this.inputNode = document.createElement('input');
-                this.inputNode.type = 'text';
-                this.inputNode.addEventListener('change', e => {
-                    const labelNode = e.target.previousElementSibling;
-                    const taskText = labelNode.querySelector('.task-text');
-                    taskText.textContent = e.target.value;
-                });
-                this.inputNode.addEventListener('blur', e => {
-                    const labelNode = e.target.previousElementSibling;
-                    const taskText = labelNode.querySelector('.task-text');
-                    taskText.style.display = 'block';
-                    e.target.style.display = 'none';
-                });
-                this.inputNode.addEventListener('keydown', e => {
-                    if (e.key === 'Enter') e.target.blur();
-                });
-            }
             this.inputNode.value = taskText.textContent;
             this.inputNode.style.display = 'inline-block';
 
@@ -332,78 +387,17 @@ class ToDoList {
         return result;
     }
 
-    #initEvents() {
-        this.inputNew.addEventListener('input', e => {
-            this.iconAdd.classList[e.target.value ? 'remove' : 'add']('disabled')
-        });
-        this.inputNew.addEventListener('keydown', e => (e.key === 'Enter') && this.fnAppendTask());
+    /**
+     * Додавання нового запису до елемента "task-list"
+     * @param {string} taskText Текст запису
+     */
+    fnAppendTask(taskText) {
+        this.#createTask(taskText);
 
-        this.iconAdd.addEventListener('click', () => this.fnAppendTask());
-
-        this.iconEdit.addEventListener('click', () => {
-            this.iconEdit.classList.toggle('active');
-
-            if (this.iconEdit.classList.contains('active')) {
-                this.taskList.dataset.edit = '1';
-            } else {
-                delete this.taskList.dataset.edit;
-            }
-        })
-
-        this.tabs.addEventListener('click', e => {
-            [].forEach.call(this.tabs.children, tab => tab.classList.remove('active'));
-
-            const target = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
-            target.classList.add('active');
-
-            this.taskList.dataset.filter = target.id;
-
-            this.#syncSlider(target);
-        });
-
-        this.taskList.addEventListener('click', e => {
-            this.fnCheckTask(e) || this.fnDeleteTask(e) || this.fnModifyTask(e);
-        });
-    }
-
-    #init() {
-        this.#syncSlider(this.tabs.children[0]);
-
-        this.tabsObserver = new ResizeObserver(entries => {
-            for (const entry of entries) {
-                if (entry.target.classList.contains('active')) {
-                    this.#syncSlider(entry.target);
-                    break;
-                }
-            }
-        });
-
-        [].forEach.call(this.tabs.children, tab => this.tabsObserver.observe(tab));
-    }
-
-    fnAppendTask() {
-        if (this.iconAdd.classList.contains('disabled')) return;
-
-        const lastChild = this.taskList.lastElementChild;
-        const id = lastChild ? String(+lastChild.id + 1) : '1';
-
-        const newTask = makeTag({tagName: 'li', id, className: "task" }, el => { el.dataset.type = 'to-do' },
-            makeTag('label',
-                makeTag('input', el => { el.type = 'checkbox' }), makeTag('span'),
-                makeTag({ tagName: 'span', className: 'task-text', textContent: this.inputNew.value })
-            ),
-            makeTag({ tagName: 'span', className: 'icon-delete' },
-                makeTag({ tagName: 'i', className: 'fa-regular fa-trash-can' } )
-            )
-        );
-
-        this.#incBadge(this.tabs.children[0], 1);
-        this.#incBadge(this.tabs.children[1], 1);
-
-        this.taskList.appendChild(newTask);
-
-        this.inputNew.value = '';
-        this.iconAdd.classList.add('disabled');
+        this.controls.incBadgeValue([
+            {pageIndex: 0, increment: 1},
+            {pageIndex: 1, increment: 1}
+        ]);
 
         const scrollHeight = Math.max(
             document.body.scrollHeight,
@@ -414,14 +408,17 @@ class ToDoList {
         this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
     }
 
+    /**
+     * Конструктор класу ToDoList
+     * @param {HTMLElement?} root Батьківський елемент
+     */
     constructor(root = document.body) {
-        this.#initSelectors(root);
-        this.#initEvents();
-        this.#init();
+        this.#initElements(root);
+        this.#initEvents(root);
+        this.#init(root);
     }
 }
 
 const root = document.getElementById('root');
 
 new ToDoList(root);
-
