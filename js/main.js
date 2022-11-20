@@ -436,12 +436,10 @@ class ToDoList {
         ]);
 
         const scrollHeight = Math.max(
-            document.body.scrollHeight, document.documentElement.scrollHeight,
+            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
         );
-
-        alert(scrollHeight);
 
         this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
 
@@ -514,6 +512,14 @@ class ToDoList {
             {pageIndex: 1, value: todoCount},
             {pageIndex: 2, value: doneCount}
         ])
+
+        const scrollHeight = Math.max(
+            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
+            document.body.offsetHeight, document.documentElement.offsetHeight,
+            document.body.clientHeight, document.documentElement.clientHeight
+        );
+
+        this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
     }
 }
 
