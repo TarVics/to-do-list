@@ -379,7 +379,7 @@
 
     /* Works on Chrome, Edge, and Safari */
     *::-webkit-scrollbar {
-        width: 4px;
+        width: 2px;
     }
 
     #root {
