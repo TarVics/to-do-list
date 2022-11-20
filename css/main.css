@@ -19,10 +19,12 @@
     background: var(--primary-color);
 }
 
-/* Works on Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #e6e6e6 #f1f1f1;
+@supports (scrollbar-width: thin) and (scrollbar-color: #e6e6e6 #f1f1f1) {
+    /* Works on Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #e6e6e6 #f1f1f1;
+    }
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -117,8 +119,8 @@
 
 .app .task-image {
     height: 120px;
-    filter: blur(2px);
     -webkit-filter: blur(2px);
+    filter: blur(2px);
     background-image: url("../img/to-do-list.png");
     background-position: top;
     background-repeat: no-repeat;
@@ -126,6 +128,7 @@
 }
 
 .app input[type="text"] {
+    min-width: 30px;
     background-color: var(--secondary-color);
     color: var(--text-color);
     outline: none;
@@ -289,15 +292,16 @@
 /**********************************************************/
 
 .app .task-list {
-    padding-top: 10px;
+    padding-top: 8px;
     padding-left: 8px;
     overflow-y: scroll;
 }
 
 .app .task {
+    /*padding: 10px 15px;*/
+    min-height: 55px;
     list-style: none;
     font-size: 18px;
-    padding: 10px 15px;
     border-bottom: 1px solid #ccc;
     display: flex;
     justify-content: space-between;
@@ -329,7 +333,13 @@
     text-decoration-line: line-through;
     text-decoration-style: solid;
     text-decoration-color: var(--primary-color);
-    text-decoration-thickness: 3px;
+    /*text-decoration-thickness: 3px;*/
+}
+
+@supports (text-decoration-thickness: 3px) {
+    .app input[type="checkbox"]:checked ~ .task-text {
+        text-decoration-thickness: 3px;
+    }
 }
 
 .app .task input[type="checkbox"] ~ .task-text {

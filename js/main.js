@@ -285,6 +285,9 @@ class ToDoList {
         this.inputNode.addEventListener('keydown', e => {
             if (e.key === 'Enter') e.target.blur();
         });
+
+        window.addEventListener('resize', () => this.#resetMaxHeight());
+        this.#resetMaxHeight();
     }
 
     /**
@@ -353,7 +356,7 @@ class ToDoList {
      * смуги прокрутки
      */
     #resetMaxHeight() {
-        setTimeout(() => {
+        // setTimeout(() => {
             // const scrollHeight = Math.max(
             //     document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
             //     document.body.getBoundingClientRect().bottom,
@@ -365,11 +368,12 @@ class ToDoList {
             //     this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
             // }
 
-            if (document.body.getBoundingClientRect().width > 500 || !this.#heightSet) {
-                this.#heightSet = true;
-                this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
-            }
-        });
+        //     if (document.body.getBoundingClientRect().width > 500 || !this.#heightSet) {
+        //         this.#heightSet = true;
+        //         this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
+        //     }
+        // });
+        this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
     }
 
     /**
@@ -461,7 +465,7 @@ class ToDoList {
             {pageIndex: 1, value: 1}
         ]);
 
-        this.#resetMaxHeight();
+        // this.#resetMaxHeight();
 
         this.save();
     }
@@ -533,7 +537,7 @@ class ToDoList {
             {pageIndex: 2, value: doneCount}
         ])
 
-        this.#resetMaxHeight();
+        // this.#resetMaxHeight();
     }
 }
 
