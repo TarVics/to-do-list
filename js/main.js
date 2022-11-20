@@ -294,7 +294,6 @@ class ToDoList {
      * @param {HTMLElement?} root Батьківський елемент
      */
     #init(root) {
-        this.#heightSet = false;
         this.#storage = '';
         this.#saveTimer = null;
 
