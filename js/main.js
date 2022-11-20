@@ -154,10 +154,21 @@ class ToDoListControls {
      * @param {number} value Значення, яке додається до лічильника
      */
     #incBadge(tab, value) {
-        let badge = tab.children[0];
-        let count = (+badge.dataset.value || 0) + value;
+        const badge = tab.children[0];
+        const count = (+badge.dataset.value || 0) + value;
         badge.dataset.value = count.toString();
         badge.textContent = count.toString();
+    }
+
+    /**
+     * Встановлення значення лічильника кількості записів списку при зміні стану завдання та після операцій створення чи видалення
+     * @param {HTMLElement} tab Вкладка, яка містить лічильник кількості записів
+     * @param {number} value Значення, яке встановлюється до лічильника
+     */
+    #setBadge(tab, value) {
+        const badge = tab.children[0];
+        badge.dataset.value = value.toString();
+        badge.textContent = value.toString();
     }
 
     /**
@@ -171,10 +182,11 @@ class ToDoListControls {
     }
 
     /**
-     * Інформація для зміни значень лічильників завдань, використовується в {@link incBadgeValue}
+     * Інформація для зміни значень лічильників завдань,
+     * використовується в {@link incBadgeValue} та в {@link setBadgeValue}
      * @typedef {Object} MovePageInfo
      * @property {number} pageIndex Індекс вкладки, на якій розміщений лічильник
-     * @property {number} increment Значення, на яке збільшується лічильник
+     * @property {number} value Значення, на яке змінюється лічильник
      */
 
     /**
@@ -182,7 +194,15 @@ class ToDoListControls {
      * @param {MovePageInfo[]} pageInfo Інформація для зміни значень лічильників завдань
      */
     incBadgeValue(pageInfo = []) {
-        pageInfo.forEach(info => this.#incBadge(this.tabs.children[info.pageIndex], info.increment));
+        pageInfo.forEach(info => this.#incBadge(this.tabs.children[info.pageIndex], info.value));
+    }
+
+    /**
+     * Встановлення значень лічильників завдань
+     * @param {MovePageInfo[]} pageInfo Інформація для встановлення значень лічильників завдань
+     */
+    setBadgeValue(pageInfo = []) {
+        pageInfo.forEach(info => this.#setBadge(this.tabs.children[info.pageIndex], info.value));
     }
 
     /**
@@ -224,6 +244,9 @@ class ToDoListControls {
  */
 class ToDoList {
 
+    #storage;
+    #saveTimer;
+
     /**
      * Ініціалізація елементів
      * @param {HTMLElement?} root Батьківський елемент
@@ -248,6 +271,7 @@ class ToDoList {
             const labelNode = e.target.previousElementSibling;
             const taskText = labelNode.querySelector('.task-text');
             taskText.textContent = e.target.value;
+            this.save();
         });
 
         this.inputNode.addEventListener('blur', e => {
@@ -267,6 +291,9 @@ class ToDoList {
      * @param {HTMLElement?} root Батьківський елемент
      */
     #init(root) {
+        this.#storage = '';
+        this.#saveTimer = null;
+
         this.header = new ToDoListHeader(root);
         this.header.onAppendTask = this.fnAppendTask.bind(this);
 
@@ -277,27 +304,32 @@ class ToDoList {
 
     /**
      * Створення нового запису із текстом "to do"
-     * @param {string} taskText Текст повідомлення
+     * @param {string} text Текст повідомлення
+     * @param {string?} id ID елемента
+     * @param {string?} type Тип повідомлення
      */
-    #createTask(taskText) {
-        const lastChild = this.taskList.lastElementChild;
-        const id = lastChild ? String(+lastChild.id + 1) : '1';
+    #createTask(text, id, type = 'todo') {
+        if(!id) {
+            const lastChild = this.taskList.lastElementChild;
+            id = lastChild ? String(+lastChild.id + 1) : '1';
+        }
 
         const newTask = document.createElement('li');
         newTask.id = id;
         newTask.className = 'task';
-        newTask.dataset.type = 'todo';
+        newTask.dataset.type = type;
 
         const label = document.createElement('label');
 
         const input = document.createElement('input');
         input.type = 'checkbox';
+        input.checked = type === 'done';
 
         const ckSpan = document.createElement('span');
 
         const taskSpan = document.createElement('span');
         taskSpan.className = 'task-text';
-        taskSpan.textContent = taskText;
+        taskSpan.textContent = text;
 
         label.append(input, ckSpan, taskSpan);
 
@@ -327,15 +359,17 @@ class ToDoList {
 
             if (e.target.checked) {
                 this.controls.incBadgeValue([
-                    {pageIndex: 1, increment: -1},
-                    {pageIndex: 2, increment: 1}
+                    {pageIndex: 1, value: -1},
+                    {pageIndex: 2, value: 1}
                 ]);
             } else {
                 this.controls.incBadgeValue([
-                    {pageIndex: 2, increment: -1},
-                    {pageIndex: 1, increment: 1}
+                    {pageIndex: 2, value: -1},
+                    {pageIndex: 1, value: 1}
                 ]);
             }
+
+            this.save();
         }
         return result;
     }
@@ -352,11 +386,13 @@ class ToDoList {
             const task = e.target.closest('li');
 
             this.controls.incBadgeValue([
-                {pageIndex: 0, increment: -1},
-                {pageIndex: task.dataset.type === 'done' ? 2 : 1, increment: -1}
+                {pageIndex: 0, value: -1},
+                {pageIndex: task.dataset.type === 'done' ? 2 : 1, value: -1}
             ]);
 
             task.remove();
+
+            this.save();
         }
 
         return result;
@@ -395,8 +431,8 @@ class ToDoList {
         this.#createTask(taskText);
 
         this.controls.incBadgeValue([
-            {pageIndex: 0, increment: 1},
-            {pageIndex: 1, increment: 1}
+            {pageIndex: 0, value: 1},
+            {pageIndex: 1, value: 1}
         ]);
 
         const scrollHeight = Math.max(
@@ -406,6 +442,8 @@ class ToDoList {
         );
 
         this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
+
+        this.save();
     }
 
     /**
@@ -417,8 +455,66 @@ class ToDoList {
         this.#initEvents(root);
         this.#init(root);
     }
+
+    /**
+     * Збереження списку повідомлень до локального сховища даних.
+     * Для того, щоб відбувся експорт, необхідно спочатку завантажити цей список за допомогою {@link load},
+     * відповідно, вказавши назву сховища. Ця назва сховища буде використовуватись надалі для збереження.
+     */
+    save() {
+        if (!this.#storage) return;
+
+        if (this.#saveTimer) {
+            clearTimeout(this.#saveTimer);
+            this.#saveTimer = null;
+        }
+
+        this.#saveTimer = setTimeout(() => {
+            const tasks = [].map.call(this.taskList.children, task => ({
+                id: task.id,
+                type: task.dataset.type,
+                text: task.firstElementChild/*label*/.lastElementChild/*span*/.textContent
+            }));
+
+            localStorage.setItem(this.#storage, JSON.stringify(tasks));
+        }, 500);
+    }
+
+    /**
+     * Завантаження списку повідомлень з локального сховища даних.
+     * @param {string} storage Назва сховища, яка буде використовуватись в операціях запису/читання сховища повідомлень
+     */
+    load(storage) {
+        if (!storage) return;
+        this.#storage = storage;
+
+        const data = localStorage.getItem(this.#storage);
+        if (!data) return;
+
+        const tasks = JSON.parse(data);
+        if (!Array.isArray(tasks)) return;
+
+        this.taskList.textContent = '';
+        let todoCount = 0;
+        let doneCount = 0;
+
+        tasks.forEach(task => {
+            if (task.type === 'todo') {
+                todoCount++;
+            } else if (task.type === 'done') {
+                doneCount++;
+            }
+            this.#createTask(task.text, task.id, task.type);
+        });
+
+        this.controls.setBadgeValue([
+            {pageIndex: 0, value: tasks.length},
+            {pageIndex: 1, value: todoCount},
+            {pageIndex: 2, value: doneCount}
+        ])
+    }
 }
 
 const root = document.getElementById('root');
-
-new ToDoList(root);
+const todoList = new ToDoList(root);
+todoList.load('TODO');

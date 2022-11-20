@@ -57,7 +57,7 @@
     width: 405px;
     position: relative;
     overflow: hidden;
-    min-height: 400px;
+    min-height: 50vh;
     max-height: 100vh;
     border-radius: 10px;
     background: var(--secondary-color);
