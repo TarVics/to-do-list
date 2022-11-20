@@ -35,7 +35,6 @@
 *::-webkit-scrollbar-track {
     /*border-radius: 5px;*/
     /*background: #f1f1f1;*/
-    /*background: green;*/
 }
 
 *::-webkit-scrollbar-thumb {
@@ -293,7 +292,7 @@
 
 .app .task-list {
     padding-top: 8px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .app .task {

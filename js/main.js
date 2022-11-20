@@ -356,23 +356,6 @@ class ToDoList {
      * смуги прокрутки
      */
     #resetMaxHeight() {
-        // setTimeout(() => {
-            // const scrollHeight = Math.max(
-            //     document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
-            //     document.body.getBoundingClientRect().bottom,
-            //     document.body.offsetHeight, document.documentElement.offsetHeight,
-            //     document.body.clientHeight, document.documentElement.clientHeight
-            // );
-            //
-            // if (document.body.getBoundingClientRect().width > 500 || !this.taskList.style.maxHeight) {
-            //     this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
-            // }
-
-        //     if (document.body.getBoundingClientRect().width > 500 || !this.#heightSet) {
-        //         this.#heightSet = true;
-        //         this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
-        //     }
-        // });
         this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
     }
 
