@@ -347,6 +347,23 @@ class ToDoList {
     }
 
     /**
+     * Встановлення максимально допустимої висоти списку, в залежності від кількості записів у ньому з метою зображення
+     * смуги прокрутки
+     */
+    #resetMaxHeight() {
+        setTimeout(() => {
+            const scrollHeight = Math.max(
+                document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
+                document.body.getBoundingClientRect().bottom,
+                document.body.offsetHeight, document.documentElement.offsetHeight,
+                document.body.clientHeight, document.documentElement.clientHeight
+            );
+
+            this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
+        });
+    }
+
+    /**
      * Обробник події зміни значення стану елемента "checkbox"
      * @param {Event} e Подія зміни значення стану елемента "checkbox"
      * @returns {boolean} Повертає true у випадку, якщо подія була успішно оброблена
@@ -435,14 +452,7 @@ class ToDoList {
             {pageIndex: 1, value: 1}
         ]);
 
-        const scrollHeight = Math.max(
-            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
-            document.body.getBoundingClientRect().bottom,
-            document.body.offsetHeight, document.documentElement.offsetHeight,
-            document.body.clientHeight, document.documentElement.clientHeight
-        );
-
-        this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
+        this.#resetMaxHeight();
 
         this.save();
     }
@@ -514,14 +524,7 @@ class ToDoList {
             {pageIndex: 2, value: doneCount}
         ])
 
-        const scrollHeight = Math.max(
-            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
-            document.body.getBoundingClientRect().bottom,
-            document.body.offsetHeight, document.documentElement.offsetHeight,
-            document.body.clientHeight, document.documentElement.clientHeight
-        );
-
-        this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
+        this.#resetMaxHeight();
     }
 }
 
