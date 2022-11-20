@@ -519,7 +519,7 @@ class ToDoList {
             document.body.clientHeight, document.documentElement.clientHeight
         );
 
-        this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
+        this.taskList.style.maxHeight = (scrollHeight /*- this.taskList.getBoundingClientRect().top*/) + 'px';
     }
 }
 
