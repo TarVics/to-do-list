@@ -244,6 +244,7 @@ class ToDoListControls {
  */
 class ToDoList {
 
+    #heightSet;
     #storage;
     #saveTimer;
 
@@ -291,6 +292,7 @@ class ToDoList {
      * @param {HTMLElement?} root Батьківський елемент
      */
     #init(root) {
+        this.#heightSet = false;
         this.#storage = '';
         this.#saveTimer = null;
 
@@ -363,7 +365,8 @@ class ToDoList {
             //     this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
             // }
 
-            if (document.body.getBoundingClientRect().width > 500 || !this.taskList.style.maxHeight) {
+            if (document.body.getBoundingClientRect().width > 500 || !this.#heightSet) {
+                this.#heightSet = true;
                 this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
             }
         });
