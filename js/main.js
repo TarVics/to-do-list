@@ -441,6 +441,8 @@ class ToDoList {
             document.body.clientHeight, document.documentElement.clientHeight
         );
 
+        alert(scrollHeight);
+
         this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
 
         this.save();
