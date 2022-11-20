@@ -446,6 +446,7 @@ class ToDoList {
 */
 
         const docBounding = document.body.getBoundingClientRect();
+        alert(docBounding.width);
         if (docBounding.width >= 500) {
             this.taskList.style.maxHeight = (docBounding.bottom - this.taskList.getBoundingClientRect().top) + 'px';
         }
@@ -531,6 +532,7 @@ class ToDoList {
         this.taskList.style.maxHeight = (scrollHeight /!*- this.taskList.getBoundingClientRect().top*!/) + 'px';
 */
         const docBounding = document.body.getBoundingClientRect();
+        alert(docBounding.width);
         if (docBounding.width >= 500) {
             this.taskList.style.maxHeight = (docBounding.bottom - this.taskList.getBoundingClientRect().top) + 'px';
         }
