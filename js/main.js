@@ -528,7 +528,9 @@ class ToDoList {
 */
         this.taskList.style.maxHeight = (document.body.getBoundingClientRect().bottom - this.taskList.getBoundingClientRect().top) + 'px';
 
-        alert(document.body.getBoundingClientRect().bottom + ' - ' + this.taskList.getBoundingClientRect().top);
+
+
+        alert(getComputedStyle(document.body).height + ' - ' + document.body.getBoundingClientRect().bottom + ' - ' + this.taskList.getBoundingClientRect().top);
     }
 }
 
