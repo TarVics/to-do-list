@@ -114,6 +114,8 @@ class ToDoListControls {
             target.classList.add('active');
             this.#syncSlider(target);
 
+            alert('TAB CHANGED');
+
             if (this.#onActiveTabChange) this.#onActiveTabChange(target);
         });
     }
@@ -285,8 +287,8 @@ class ToDoList {
             if (e.key === 'Enter') e.target.blur();
         });
 
-        window.addEventListener('resize', () => this.#resetMaxHeight());
-        this.#resetMaxHeight();
+        window.addEventListener('resize', () => this.fnResetMaxHeight());
+        this.fnResetMaxHeight();
     }
 
     /**
@@ -353,7 +355,7 @@ class ToDoList {
      * Встановлення максимально допустимої висоти списку, в залежності від кількості записів у ньому з метою зображення
      * смуги прокрутки
      */
-    #resetMaxHeight() {
+    fnResetMaxHeight() {
         this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
     }
 
