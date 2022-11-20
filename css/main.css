@@ -40,7 +40,7 @@
 
 *::-webkit-scrollbar-thumb {
     background: rgba(230, 230, 230, 0.5);
-    border-radius: 4px;
+    border-radius: 2px;
     /*border: 3px solid orange;*/
 }
 
@@ -293,12 +293,11 @@
 
 .app .task-list {
     padding-top: 8px;
-    padding-left: 8px;
     overflow-y: scroll;
 }
 
 .app .task {
-    /*padding: 10px 15px;*/
+    padding: 0 15px;
     min-height: 55px;
     list-style: none;
     font-size: 18px;
@@ -376,6 +375,12 @@
 /*********************************************************************/
 
 @media (max-width: 500px) {
+
+    /* Works on Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        width: 4px;
+    }
+
     #root {
         align-items: flex-start;
     }
