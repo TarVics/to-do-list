@@ -435,13 +435,16 @@ class ToDoList {
             {pageIndex: 1, value: 1}
         ]);
 
+/*
         const scrollHeight = Math.max(
-            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
+            document.body.scrollHeight, /!*document.documentElement.scrollHeight,*!/
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
         );
 
         this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
+*/
+        this.taskList.style.maxHeight = (document.body.getBoundingClientRect().bottom - this.taskList.getBoundingClientRect().top) + 'px';
 
         this.save();
     }
@@ -513,13 +516,17 @@ class ToDoList {
             {pageIndex: 2, value: doneCount}
         ])
 
+/*
+
         const scrollHeight = Math.max(
-            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
+            document.body.scrollHeight, /!*document.documentElement.scrollHeight,*!/
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
         );
 
-        this.taskList.style.maxHeight = (scrollHeight /*- this.taskList.getBoundingClientRect().top*/) + 'px';
+        this.taskList.style.maxHeight = (scrollHeight /!*- this.taskList.getBoundingClientRect().top*!/) + 'px';
+*/
+        this.taskList.style.maxHeight = (document.body.getBoundingClientRect().bottom - this.taskList.getBoundingClientRect().top) + 'px';
     }
 }
 
