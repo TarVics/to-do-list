@@ -448,8 +448,6 @@ class ToDoList {
             {pageIndex: 1, value: 1}
         ]);
 
-        // this.#resetMaxHeight();
-
         this.save();
     }
 
@@ -519,8 +517,6 @@ class ToDoList {
             {pageIndex: 1, value: todoCount},
             {pageIndex: 2, value: doneCount}
         ])
-
-        // this.#resetMaxHeight();
     }
 }
 
