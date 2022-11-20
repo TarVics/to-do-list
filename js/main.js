@@ -363,7 +363,7 @@ class ToDoList {
             //     this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
             // }
 
-            this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
+            this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top - 60) + 'px';
         });
     }
 
