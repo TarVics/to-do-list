@@ -117,9 +117,9 @@
 /**********************************************************/
 
 .app .task-image {
-    height: 120px;
-    -webkit-filter: blur(2px);
-    filter: blur(2px);
+    height: 150px;
+    /*-webkit-filter: blur(1px);*/
+    /*filter: blur(1px);*/
     background-image: url("../img/to-do-list.png");
     background-position: top;
     background-repeat: no-repeat;

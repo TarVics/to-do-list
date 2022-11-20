@@ -114,8 +114,6 @@ class ToDoListControls {
             target.classList.add('active');
             this.#syncSlider(target);
 
-            alert('TAB CHANGED');
-
             if (this.#onActiveTabChange) this.#onActiveTabChange(target);
         });
     }
