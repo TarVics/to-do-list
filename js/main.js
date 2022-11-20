@@ -244,7 +244,6 @@ class ToDoListControls {
  */
 class ToDoList {
 
-    #heightSet;
     #storage;
     #saveTimer;
 
