@@ -527,6 +527,8 @@ class ToDoList {
         this.taskList.style.maxHeight = (scrollHeight /!*- this.taskList.getBoundingClientRect().top*!/) + 'px';
 */
         this.taskList.style.maxHeight = (document.body.getBoundingClientRect().bottom - this.taskList.getBoundingClientRect().top) + 'px';
+
+        alert(document.body.getBoundingClientRect().bottom);
     }
 }
 
