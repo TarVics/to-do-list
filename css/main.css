@@ -118,8 +118,8 @@
 
 .app .task-image {
     height: 150px;
-    /*-webkit-filter: blur(1px);*/
-    /*filter: blur(1px);*/
+    -webkit-filter: blur(2px);
+    filter: blur(2px);
     background-image: url("../img/to-do-list.png");
     background-position: top;
     background-repeat: no-repeat;
@@ -279,6 +279,7 @@
     box-shadow: inset -2px -2px 2px rgba(250, 250, 250, 1),
     inset 2px 2px 4px rgba(0, 0, 0, 0.4),
     0 0 0 2px var(--primary-color);
+    border-radius: 10px;
     transform: scale(0.9);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -359,6 +360,7 @@
 
 .app .icon-delete:active {
     background-color: var(--primary-color);
+    border-radius: 50%;
     color: var(--secondary-color);
 }
 
