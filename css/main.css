@@ -29,7 +29,7 @@
 
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-    width: 8px;
+    width: 4px;
 }
 
 *::-webkit-scrollbar-track {
@@ -38,13 +38,13 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background: rgba(230, 230, 230, 0.5);
+    background: rgba(200, 200, 200, 0.5);
     border-radius: 2px;
     /*border: 3px solid orange;*/
 }
 
 *::-webkit-scrollbar-thumb:hover {
-    background: rgba(230, 230, 230, 0.9);
+    background: rgba(200, 200, 200, 0.9);
     /*border-radius: 5px;*/
     /*border: 3px solid orange;*/
 }
@@ -374,11 +374,6 @@
 /*********************************************************************/
 
 @media (max-width: 500px) {
-
-    /* Works on Chrome, Edge, and Safari */
-    *::-webkit-scrollbar {
-        width: 4px;
-    }
 
     #root {
         align-items: flex-start;
