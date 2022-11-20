@@ -435,21 +435,14 @@ class ToDoList {
             {pageIndex: 1, value: 1}
         ]);
 
-/*
         const scrollHeight = Math.max(
-            document.body.scrollHeight, /!*document.documentElement.scrollHeight,*!/
+            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
+            document.body.getBoundingClientRect().bottom,
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
         );
 
         this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
-*/
-
-        const docBounding = document.body.getBoundingClientRect();
-        alert(docBounding.width);
-        if (docBounding.width >= 500) {
-            this.taskList.style.maxHeight = (docBounding.bottom - this.taskList.getBoundingClientRect().top) + 'px';
-        }
 
         this.save();
     }
@@ -521,21 +514,14 @@ class ToDoList {
             {pageIndex: 2, value: doneCount}
         ])
 
-/*
-
         const scrollHeight = Math.max(
-            document.body.scrollHeight, /!*document.documentElement.scrollHeight,*!/
+            document.body.scrollHeight, /*document.documentElement.scrollHeight,*/
+            document.body.getBoundingClientRect().bottom,
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
         );
 
-        this.taskList.style.maxHeight = (scrollHeight /!*- this.taskList.getBoundingClientRect().top*!/) + 'px';
-*/
-        const docBounding = document.body.getBoundingClientRect();
-        alert(docBounding.width);
-        if (docBounding.width >= 500) {
-            this.taskList.style.maxHeight = (docBounding.bottom - this.taskList.getBoundingClientRect().top) + 'px';
-        }
+        this.taskList.style.maxHeight = (scrollHeight - this.taskList.getBoundingClientRect().top) + 'px';
     }
 }
 
