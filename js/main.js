@@ -129,7 +129,7 @@ class ToDoListControls {
         this.#syncSlider(this.tabs.children[0]);
 
         this.tabsObserver = new ResizeObserver(() => {
-            [].forEach.call(this.tabs.children,tab =>
+            [].forEach.call(this.tabs.children, tab =>
                 tab.classList.contains('active') && this.#syncSlider(tab));
         });
 
@@ -156,8 +156,10 @@ class ToDoListControls {
     #incBadge(tab, value) {
         const badge = tab.children[0];
         const count = (+badge.dataset.value || 0) + value;
-        badge.dataset.value = count.toString();
-        badge.textContent = count.toString();
+        if (count >= 0) {
+            badge.dataset.value = count.toString();
+            badge.textContent = count.toString();
+        }
     }
 
     /**
@@ -244,6 +246,7 @@ class ToDoListControls {
  */
 class ToDoList {
 
+    #pageId = 'all';
     #storage;
     #saveTimer;
 
@@ -302,7 +305,11 @@ class ToDoList {
 
         this.controls = new ToDoListControls(root);
         this.controls.onEditModeChange = edit => this.taskList.dataset.edit = (+edit).toString();
-        this.controls.onActiveTabChange = tab => this.taskList.dataset.filter = tab.id;
+        this.controls.onActiveTabChange = tab => {
+            this.taskList.dataset.filter = tab.id;
+            this.#pageId = tab.id;
+            this.fnResetMinHeight();
+        }
     }
 
     /**
@@ -312,7 +319,7 @@ class ToDoList {
      * @param {string?} type Тип повідомлення
      */
     #createTask(text, id, type = 'todo') {
-        if(!id) {
+        if (!id) {
             const lastChild = this.taskList.lastElementChild;
             id = lastChild ? String(+lastChild.id + 1) : '1';
         }
@@ -355,6 +362,27 @@ class ToDoList {
      */
     fnResetMaxHeight() {
         this.taskList.style.maxHeight = (window.innerHeight - this.taskList.getBoundingClientRect().top) + 'px';
+    }
+
+    /**
+     * Встановлення мінімально допустимої висоти списку
+     */
+    fnResetMinHeight() {
+        if (this.#pageId === 'all') {
+            let height = [].reduce.call(this.taskList.children,(acc, val) => {
+                acc += val.getBoundingClientRect().height;
+                return acc;
+            }, 0);
+
+            const boundHeight = this.taskList.getBoundingClientRect().height;
+            if (height < boundHeight) {
+                height += 10;
+            } else {
+                height = boundHeight;
+            }
+
+            this.taskList.style.minHeight = height + 'px';
+        }
     }
 
     /**
@@ -403,6 +431,7 @@ class ToDoList {
 
             task.remove();
 
+            this.fnResetMinHeight();
             this.save();
         }
 
@@ -446,6 +475,7 @@ class ToDoList {
             {pageIndex: 1, value: 1}
         ]);
 
+        this.fnResetMinHeight();
         this.save();
     }
 
@@ -510,11 +540,15 @@ class ToDoList {
             this.#createTask(task.text, task.id, task.type);
         });
 
+        this.inputNode.value = '';
+
         this.controls.setBadgeValue([
             {pageIndex: 0, value: tasks.length},
             {pageIndex: 1, value: todoCount},
             {pageIndex: 2, value: doneCount}
-        ])
+        ]);
+
+        this.fnResetMinHeight();
     }
 }
 
